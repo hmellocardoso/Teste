@@ -23,11 +23,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node 22
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: 'npm'
+          node-version: 22
+          cache: npm
 
       - name: Install deps
         run: npm ci
@@ -35,11 +35,13 @@ jobs:
       - name: Verify Cypress
         run: npx cypress verify
 
-      - name: Run Cypress (headless)
+      # Use a ação oficial do Cypress sem sobrescrever 'browser'
+      - name: Run Cypress (Chrome headless)
         uses: cypress-io/github-action@v6
         with:
-          command: npx cypress run
           browser: chrome
+          # se precisar de tags do Cucumber:
+          # command: npx cypress run --env "tags=@sucesso"
 
       - name: Setup Java (for Allure CLI)
         uses: actions/setup-java@v4
@@ -62,7 +64,7 @@ jobs:
         with:
           path: allure-report
 
-      - name: Upload Cypress artifacts (screens/videos/results)
+      - name: Upload Cypress artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
